@@ -40,9 +40,8 @@ namespace EdjCase.JsonRpc.Core
 		/// <summary>
 		/// Request id (Required but nullable)
 		/// </summary>
-		[JsonProperty("id", Required = Required.AllowNull)]
-		[JsonConverter(typeof(RpcIdJsonConverter))]
-		public object Id { get; private set; }
+		[JsonProperty("id", Required = Required.Default)]
+		public string Id { get; private set; }
 
 		/// <summary>
 		/// Rpc request version (Required)

@@ -25,7 +25,7 @@ namespace EdjCase.JsonRpc.Core
 		/// <param name="id">Request id</param>
 		/// <param name="method">Target method name</param>
 		/// <param name="parameterList">Json parameters for the target method</param>
-		public RpcRequest(RpcId id, string method, JToken parameters)
+		public RpcRequest(string id, string method, JToken parameters)
 		{
 			this.Id = id;
 			this.JsonRpcVersion = JsonRpcContants.JsonRpcVersion;
@@ -37,8 +37,7 @@ namespace EdjCase.JsonRpc.Core
 		/// Request Id (Optional)
 		/// </summary>
 		[JsonProperty("id")]
-		[JsonConverter(typeof(RpcIdJsonConverter))]
-		public RpcId Id { get; private set; }
+		public string Id { get; private set; }
 		/// <summary>
 		/// Version of the JsonRpc to be used (Required)
 		/// </summary>
@@ -58,7 +57,7 @@ namespace EdjCase.JsonRpc.Core
 
 		public static RpcRequest WithNoParameters(string id, string method)
 		{
-			return RpcRequest.ConvertInternal(new RpcId(id), method, null, null);
+			return RpcRequest.ConvertInternal(id, method, null, null);
 		}
 
 		public static RpcRequest WithNoParameters(string method)
@@ -68,12 +67,12 @@ namespace EdjCase.JsonRpc.Core
 
 		public static RpcRequest WithParameterList(string id, string method, IList<object> parameters, JsonSerializer jsonSerializer = null)
 		{
-			return RpcRequest.ConvertInternal(new RpcId(id), method, parameters, jsonSerializer);
+			return RpcRequest.ConvertInternal(id, method, parameters, jsonSerializer);
 		}
 
 		public static RpcRequest WithParameterList(int id, string method, IList<object> parameters, JsonSerializer jsonSerializer = null)
 		{
-			return RpcRequest.ConvertInternal(new RpcId(id), method, parameters, jsonSerializer);
+			return RpcRequest.ConvertInternal(id.ToString(), method, parameters, jsonSerializer);
 		}
 
 		public static RpcRequest WithParameterList(string method, IList<object> parameters, JsonSerializer jsonSerializer = null)
@@ -83,12 +82,12 @@ namespace EdjCase.JsonRpc.Core
 
 		public static RpcRequest WithParameterMap(string id, string method, IDictionary<string, object> parameters, JsonSerializer jsonSerializer = null)
 		{
-			return RpcRequest.ConvertInternal(new RpcId(id), method, parameters, jsonSerializer);
+			return RpcRequest.ConvertInternal(id, method, parameters, jsonSerializer);
 		}
 
 		public static RpcRequest WithParameterMap(int id, string method, IDictionary<string, object> parameters, JsonSerializer jsonSerializer = null)
 		{
-			return RpcRequest.ConvertInternal(new RpcId(id), method, parameters, jsonSerializer);
+			return RpcRequest.ConvertInternal(id.ToString(), method, parameters, jsonSerializer);
 		}
 
 		public static RpcRequest WithParameterMap(string method, IDictionary<string, object> parameters, JsonSerializer jsonSerializer = null)
@@ -96,13 +95,13 @@ namespace EdjCase.JsonRpc.Core
 			return RpcRequest.ConvertInternal(default, method, parameters, jsonSerializer);
 		}
 
-		private static RpcRequest ConvertInternal(RpcId id, string method, object parameters, JsonSerializer jsonSerializer = null)
+		private static RpcRequest ConvertInternal(string id, string method, object parameters, JsonSerializer jsonSerializer = null)
 		{
 			if(method == null)
 			{
 				throw new ArgumentNullException(nameof(method));
 			}
-			JToken sParameters = parameters == null 
+			JToken sParameters = parameters == null
 				? null
 				: jsonSerializer == null
 					? JToken.FromObject(parameters)
